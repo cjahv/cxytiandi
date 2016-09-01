@@ -30,7 +30,34 @@ public class SpringMongoClient {
 	
 	public static void main(String[] args)  throws Exception {
 		//initArticle();
-		updateArticle();
+		//updateArticle();
+		removeArticle();
+	}
+	
+	public static void removeArticle() {
+		//删除author为yinjihuan的数据
+		Query query = Query.query(Criteria.where("author").is("yinjihuan"));
+		mongoTemplate.remove(query, Article.class);
+		
+		//如果实体类中没配集合名词，可在删除的时候单独指定article_info
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		mongoTemplate.remove(query, "article_info");
+		
+		//查询出符合条件的第一个结果，并将符合条件的数据删除,只会删除第一条
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		Article article = mongoTemplate.findAndRemove(query, Article.class);
+		
+		//查询出符合条件的所有结果，并将符合条件的所有数据删除
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		List<Article> articles = mongoTemplate.findAllAndRemove(query, Article.class);
+		
+		//删除集合吗，可传实体类，也可以传名称
+		mongoTemplate.dropCollection(Article.class);
+		mongoTemplate.dropCollection("article_info");
+		
+		//删除数据库
+		mongoTemplate.getDb().dropDatabase();
+		
 	}
 	
 	public static void updateArticle() {
@@ -40,6 +67,8 @@ public class SpringMongoClient {
 		mongoTemplate.updateFirst(query, update, Article.class);
 		
 		//修改全部符合条件的
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		update = Update.update("title", "MongoTemplate").set("visitCount", 10);
 		mongoTemplate.updateMulti(query, update, Article.class);
 		
 		//特殊更新，更新author为jason的数据，如果没有author为jason的数据则以此条件创建一条新的数据
@@ -69,7 +98,7 @@ public class SpringMongoClient {
 		mongoTemplate.updateMulti(query, update, Article.class);
 		
 		//update的pull方法用于删除tags数组中的java
-		query = Query.query(Criteria.where("author").is("jason"));
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
 		update = Update.update("title", "MongoTemplate").pull("tags", "java");
 		mongoTemplate.updateMulti(query, update, Article.class);
 	}
