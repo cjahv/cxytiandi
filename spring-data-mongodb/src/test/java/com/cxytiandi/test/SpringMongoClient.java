@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,7 +32,62 @@ public class SpringMongoClient {
 	public static void main(String[] args)  throws Exception {
 		//initArticle();
 		//updateArticle();
-		removeArticle();
+		//removeArticle();
+		queryArticle();
+	}
+	
+	public static void queryArticle() {
+		//根据作者查询所有符合条件的数据
+		Query query = Query.query(Criteria.where("author").is("yinjihuan"));
+		List<Article> articles = mongoTemplate.find(query, Article.class);
+		
+		//只查询符合条件的第一条数据
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		Article article = mongoTemplate.findOne(query, Article.class);
+		
+		//查询集合中所有数据，不加条件
+		articles = mongoTemplate.findAll(Article.class);
+		
+		//查询符合条件的数量
+		query = Query.query(Criteria.where("author").is("yinjihuan"));
+		long count = mongoTemplate.count(query, Article.class);
+		
+		//根据主键ID查询
+		article = mongoTemplate.findById(new ObjectId("57c6e1601e4735b2c306cdb7"), Article.class);
+		
+		//in查询
+		List<String> authors = Arrays.asList("yinjihuan", "jason");
+		query = Query.query(Criteria.where("author").in(authors));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//ne（!=）查询
+		query = Query.query(Criteria.where("author").ne("yinjihuan"));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//lt(<)查询访问量小于10的文章
+		query = Query.query(Criteria.where("visitCount").lt(10));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//范围查询，大于5小于10
+		query = Query.query(Criteria.where("visitCount").gt(5).lt(10));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//模糊查询，author中包含a的数据
+		query = Query.query(Criteria.where("author").regex("a"));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//数组查询，查询tags里数量为3的数据
+		query = Query.query(Criteria.where("tags").size(3));
+		articles = mongoTemplate.find(query, Article.class);
+		
+		//or查询，查询author=jason的或者visitCount=0的数据
+		query = Query.query(Criteria.where("").orOperator(
+				Criteria.where("author").is("jason"),
+				Criteria.where("visitCount").is(0)));
+		articles = mongoTemplate.find(query, Article.class);
+		for (Article article2 : articles) {
+			System.out.println(article2.getAuthor());
+		}
 	}
 	
 	public static void removeArticle() {
