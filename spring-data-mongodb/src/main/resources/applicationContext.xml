@@ -46,6 +46,8 @@
 		</constructor-arg>
 	</bean>
 	
+	<mongo:repositories base-package="com.cxytiandi.mongo.repository" />
+	
 	<!-- 自动扫描以下包的有Doucment注解的类 -->
 	<mongo:mapping-converter id="mappingConverter" base-package="com.cxytiandi.mongo.document" type-mapper-ref="defaultMongoTypeMapper"></mongo:mapping-converter>
 	
