@@ -62,5 +62,7 @@
 	    <constructor-arg ref="mongoDbFactory" />
 	    <constructor-arg ref="mappingConverter" />
   	</bean>
+  	
+  	<bean class="com.cxytiandi.mongo.autoid.SaveMongoEventListener"></bean>
 	
 </beans>
