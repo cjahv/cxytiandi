@@ -33,7 +33,7 @@ public class SpringMongoClient {
 		//initArticle();
 		//updateArticle();
 		//removeArticle();
-		queryArticle();
+		//queryArticle();
 	}
 	
 	public static void queryArticle() {
