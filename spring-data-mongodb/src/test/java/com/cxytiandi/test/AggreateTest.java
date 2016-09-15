@@ -23,7 +23,7 @@ import java.util.List;
  *
  */
 public class AggreateTest {
-private static MongoTemplate mongoTemplate;
+	private static MongoTemplate mongoTemplate;
 	
 	static {
 		//加载spring
